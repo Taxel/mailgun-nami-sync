@@ -8,6 +8,7 @@ module.exports = {
   ],
   module: {
     loaders: [
+      { test: /\.tsx?$/, loader: 'ts-loader' },
       { test: /\.css$/, loader: 'style-loader!css-loader' },
       { test: /\.json$/, loader: 'json-loader' }
     ]
@@ -20,7 +21,7 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.js', '.jsx', '.json']
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
   },
 
   plugins: [
