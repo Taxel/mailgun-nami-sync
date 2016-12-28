@@ -25,7 +25,8 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Electron Mailgun'
+      title: 'Electron Mailgun',
+      template: 'app/index.html'
     })
   ]
 };
