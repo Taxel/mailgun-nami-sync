@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/aengl/electron-mailgun#readme",
   "dependencies": {
+    "@types/request": "^0.0.39",
     "electron": "^1.4.13"
   },
   "devDependencies": {
