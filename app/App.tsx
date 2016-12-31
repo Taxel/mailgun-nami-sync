@@ -39,7 +39,9 @@ export class App extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    new MediumEditor('.App-editor');
+    new MediumEditor('.App-editor', {
+      buttonLabels: 'fontawesome'
+    });
   }
 
   render() {
