@@ -11,10 +11,12 @@ interface Props {}
 
 interface State {
   key?: string;
+  html?: string;
   [name: string]: any;
 }
 
 export class App extends React.Component<Props, State> {
+  editor: any;
   saveTimer: number;
   refs: {
     key: HTMLInputElement;
@@ -27,8 +29,10 @@ export class App extends React.Component<Props, State> {
     this.syncState = this.syncState.bind(this);
     this.saveState = this.saveState.bind(this);
     this.state = {
-      key: ''
+      key: '',
+      html: ''
     };
+    // Restore state from localStorage
     const settings = window.localStorage.getItem('settings');
     if (settings) {
       const settingsDecoded = JSON.parse(window.localStorage['settings'] );
@@ -39,8 +43,17 @@ export class App extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    new MediumEditor('.App-editor', {
+    this.editor = new MediumEditor('.App-editor', {
       buttonLabels: 'fontawesome'
+    });
+    // Restore state
+    this.editor.setContent(this.state.html);
+    // Subscribe to changes
+    this.editor.subscribe('editableInput', (event: any, editable: any) => {
+      this.setState({
+        html: editable.innerHTML
+      });
+      this.queueSave();
     });
   }
 
@@ -79,23 +92,30 @@ export class App extends React.Component<Props, State> {
     );
   }
 
-  syncState() {
-    this.setState({
-      key: this.refs.key.value
-    });
-    // Trigger a save
+  getFormattedText() {
+    return `<html>${this.state.html}</html>`;
+  }
+
+  queueSave() {
     if (this.saveTimer) {
       window.clearTimeout(this.saveTimer);
     }
     this.saveTimer = window.setTimeout(this.saveState, 1000);
   }
 
-  saveState() {
+  private syncState() {
+    this.setState({
+      key: this.refs.key.value
+    });
+    this.queueSave();
+  }
+
+  private saveState() {
     window.localStorage['settings'] = JSON.stringify(this.state);
     console.log('Saved settings', window.localStorage);
   }
 
-  onSubmit(event: React.MouseEvent<HTMLButtonElement>) {
+  private onSubmit(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
     request.post({
@@ -108,12 +128,12 @@ export class App extends React.Component<Props, State> {
         from: 'no-reply@sector4.life',
         to: 'launch@sector4.life',
         subject: 'Newsletter',
-        text: 'Test!'
+        html: this.getFormattedText()
       }
     }, this.onRequestResponse);
   }
 
-  onRequestResponse(error: any, response: request.RequestResponse, body: any): void {
+  private onRequestResponse(error: any, response: request.RequestResponse, body: any): void {
     if (error) {
       console.error(error);
     }
