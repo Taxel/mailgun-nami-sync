@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOMServer from 'react-dom/server';
 import * as request from 'request';
 
 const MediumEditor = require('medium-editor');
@@ -61,7 +62,7 @@ export class App extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.editor = new MediumEditor('.App-editor', {
+    this.editor = new MediumEditor('.App-editor-content', {
       buttonLabels: 'fontawesome'
     });
     // Restore state
@@ -125,7 +126,9 @@ export class App extends React.Component<Props, State> {
           </div>
           {/* HTML editor */}
           <div className='form-group'>
-            <div className='App-editor form-control' />
+            <div className='form-control App-editor'>
+              <div id='body' className='App-editor-content' />
+            </div>
           </div>
           {/* Submit */}
           <button
@@ -141,8 +144,12 @@ export class App extends React.Component<Props, State> {
     );
   }
 
-  getFormattedText() {
-    return `<html>${this.state.html}</html>`;
+  getMailBody() {
+    return ReactDOMServer.renderToString(
+      <html>
+        <body id='body'>${this.state.html}</body>
+      </html>
+    );
   }
 
   queueSave() {
@@ -192,7 +199,7 @@ export class App extends React.Component<Props, State> {
           from: 'no-reply@sector4.life',
           to: 'launch@sector4.life',
           subject: this.state.subject,
-          html: this.getFormattedText()
+          html: this.getMailBody()
         }
       }, this.onRequestResponse);
       this.setState({

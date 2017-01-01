@@ -4,4 +4,10 @@ body {
 
 .App-editor {
   height: 470px;
+  margin: 0;
+  padding: 0;
+}
+
+.App-editor-content {
+  height: 100%;
 }
