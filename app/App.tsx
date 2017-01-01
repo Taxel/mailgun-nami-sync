@@ -14,6 +14,8 @@ interface State {
   css?: string;
   key?: string;
   html?: string;
+  status?: JSX.Element;
+  requestPending?: boolean;
   [name: string]: any;
 }
 
@@ -34,11 +36,14 @@ export class App extends React.Component<Props, State> {
     this.syncState = this.syncState.bind(this);
     this.saveState = this.saveState.bind(this);
     this.refreshCSS = this.refreshCSS.bind(this);
+    this.onRequestResponse = this.onRequestResponse.bind(this);
     this.state = {
       subject: '',
       css: '',
       key: '',
-      html: ''
+      html: '',
+      status: undefined,
+      requestPending: false
     };
     // Restore state from localStorage
     const settings = window.localStorage.getItem('settings');
@@ -70,56 +75,69 @@ export class App extends React.Component<Props, State> {
     });
     // Apply styles
     this.refreshCSS();
+    this.setState({
+      status: (
+        <div className='text-info'>
+          <i className='fa fa-smile-o'></i> Ready!
+        </div>
+      )
+    });
   }
 
   render() {
     return (
-      <form>
-        {/* Subject */}
-        <div className='form-group'>
-          <input
-            ref='subject'
-            type='subject'
-            className='form-control'
-            placeholder='Subject'
-            value={this.state.subject}
-            onChange={this.syncState} />
-        </div>
-        {/* CSS source */}
-        <div className='form-group'>
-          <div className='input-group'>
+      <div>
+        <form>
+          {/* Subject */}
+          <div className='form-group'>
             <input
-              ref='css'
-              type='css'
+              ref='subject'
+              type='subject'
               className='form-control'
-              placeholder='CSS Source'
-              value={this.state.css}
+              placeholder='Subject'
+              value={this.state.subject}
               onChange={this.syncState} />
-            <div
-              className='input-group-addon btn btn-primary'
-              onClick={this.refreshCSS}>Reload</div>
           </div>
-        </div>
-        {/* API key */}
-        <div className='form-group'>
-          <input
-            ref='key'
-            type='key'
-            className='form-control'
-            placeholder='API key'
-            value={this.state.key}
-            onChange={this.syncState} />
-        </div>
-        {/* HTML editor */}
-        <div className='form-group'>
-          <div className='App-editor form-control' />
-        </div>
-        {/* Submit */}
-        <button
-          type='submit'
-          className='btn btn-primary float-xs-right'
-          onClick={this.onSubmit}>Submit</button>
-      </form>
+          {/* CSS source */}
+          <div className='form-group'>
+            <div className='input-group'>
+              <input
+                ref='css'
+                type='css'
+                className='form-control'
+                placeholder='CSS Source'
+                value={this.state.css}
+                onChange={this.syncState} />
+              <div
+                className='input-group-addon btn btn-primary'
+                onClick={this.refreshCSS}>Reload</div>
+            </div>
+          </div>
+          {/* API key */}
+          <div className='form-group'>
+            <input
+              ref='key'
+              type='key'
+              className='form-control'
+              placeholder='API key'
+              value={this.state.key}
+              onChange={this.syncState} />
+          </div>
+          {/* HTML editor */}
+          <div className='form-group'>
+            <div className='App-editor form-control' />
+          </div>
+          {/* Submit */}
+          <button
+            type='submit'
+            className='btn btn-primary float-xs-right'
+            onClick={this.onSubmit}>Submit</button>
+        </form>
+        {/* Status bar */}
+        <nav className='navbar navbar-light navbar-fixed-bottom bg-faded'>
+          {this.state.status}
+        </nav>
+      </div>
     );
   }
 
@@ -144,7 +162,12 @@ export class App extends React.Component<Props, State> {
   }
 
   private saveState() {
-    window.localStorage['settings'] = JSON.stringify(this.state);
+    window.localStorage['settings'] = JSON.stringify({
+      subject: this.state.subject,
+      css: this.state.css,
+      key: this.state.key,
+      html: this.state.html
+    });
     console.log('Saved settings', window.localStorage);
   }
 
@@ -158,25 +181,54 @@ export class App extends React.Component<Props, State> {
   private onSubmit(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
-    request.post({
-      url: 'https://api.mailgun.net/v3/sector4.life/messages',
-      auth: {
-        user: 'api',
-        pass: this.state.key
-      },
-      form: {
-        from: 'no-reply@sector4.life',
-        to: 'launch@sector4.life',
-        subject: 'Newsletter',
-        html: this.getFormattedText()
-      }
-    }, this.onRequestResponse);
+    if (!this.state.requestPending) {
+      request.post({
+        url: 'https://api.mailgun.net/v3/sector4.life/messages',
+        auth: {
+          user: 'api',
+          pass: this.state.key
+        },
+        form: {
+          from: 'no-reply@sector4.life',
+          to: 'launch@sector4.life',
+          subject: this.state.subject,
+          html: this.getFormattedText()
+        }
+      }, this.onRequestResponse);
+      this.setState({
+        status: (
+          <div className='text-info'>
+            <i className='fa fa-refresh fa-spin fa-fw'></i> Sending newsletter..
+          </div>
+        ),
+        requestPending: true
+      });
+    }
   }
 
   private onRequestResponse(error: any, response: request.RequestResponse, body: any): void {
-    if (error) {
-      console.error(error);
+    if (error || response.statusCode !== 200) {
+      if (response && response.statusCode === 401) {
+        error = 'Invalid API key';
+      }
+      this.setState({
+        status: (
+          <div className='text-danger'>
+            <i className='fa fa-exclamation-triangle'></i> {error || body}
+          </div>
+        ),
+        requestPending: false
+      });
+    } else {
+      this.setState({
+        status: (
+          <div className='text-info'>
+            <i className='fa fa-envelope'></i> Mail was sent successfully!
+          </div>
+        ),
+        requestPending: false
+      });
     }
-    console.log(body);
+    console.log(response, body);
   }
 }
