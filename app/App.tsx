@@ -10,15 +10,20 @@ require('./medium-beagle.css');
 interface Props {}
 
 interface State {
+  subject?: string;
+  css?: string;
   key?: string;
   html?: string;
   [name: string]: any;
 }
 
 export class App extends React.Component<Props, State> {
+  link: HTMLLinkElement;
   editor: any;
   saveTimer: number;
   refs: {
+    subject: HTMLInputElement;
+    css: HTMLInputElement;
     key: HTMLInputElement;
     [key: string]: any;
   }
@@ -28,7 +33,10 @@ export class App extends React.Component<Props, State> {
     this.onSubmit = this.onSubmit.bind(this);
     this.syncState = this.syncState.bind(this);
     this.saveState = this.saveState.bind(this);
+    this.refreshCSS = this.refreshCSS.bind(this);
     this.state = {
+      subject: '',
+      css: '',
       key: '',
       html: ''
     };
@@ -40,6 +48,11 @@ export class App extends React.Component<Props, State> {
         this.state[key] = settingsDecoded[key];
       }
     }
+    // Add link
+    this.link = document.createElement('link');
+    this.link.type = 'text/css';
+    this.link.rel = 'stylesheet';
+    document.head.appendChild(this.link);
   }
 
   componentDidMount() {
@@ -55,23 +68,39 @@ export class App extends React.Component<Props, State> {
       });
       this.queueSave();
     });
+    // Apply styles
+    this.refreshCSS();
   }
 
   render() {
     return (
       <form>
+        {/* Subject */}
         <div className='form-group'>
           <input
+            ref='subject'
             type='subject'
             className='form-control'
-            placeholder='Subject' />
+            placeholder='Subject'
+            value={this.state.subject}
+            onChange={this.syncState} />
         </div>
+        {/* CSS source */}
         <div className='form-group'>
-          <input
-            type='css'
-            className='form-control'
-            placeholder='CSS Source' />
+          <div className='input-group'>
+            <input
+              ref='css'
+              type='css'
+              className='form-control'
+              placeholder='CSS Source'
+              value={this.state.css}
+              onChange={this.syncState} />
+            <div
+              className='input-group-addon btn btn-primary'
+              onClick={this.refreshCSS}>Reload</div>
+          </div>
         </div>
+        {/* API key */}
         <div className='form-group'>
           <input
             ref='key'
@@ -79,11 +108,13 @@ export class App extends React.Component<Props, State> {
             className='form-control'
             placeholder='API key'
             value={this.state.key}
-            onChange={this.syncState}/>
+            onChange={this.syncState} />
         </div>
+        {/* HTML editor */}
         <div className='form-group'>
           <div className='App-editor form-control' />
         </div>
+        {/* Submit */}
         <button
           type='submit'
           className='btn btn-primary float-xs-right'
@@ -105,6 +136,8 @@ export class App extends React.Component<Props, State> {
 
   private syncState() {
     this.setState({
+      subject: this.refs.subject.value,
+      css: this.refs.css.value,
       key: this.refs.key.value
     });
     this.queueSave();
@@ -113,6 +146,13 @@ export class App extends React.Component<Props, State> {
   private saveState() {
     window.localStorage['settings'] = JSON.stringify(this.state);
     console.log('Saved settings', window.localStorage);
+  }
+
+  private refreshCSS() {
+    const href = this.refs.css.value;
+    if (href) {
+      this.link.href = this.refs.css.value;
+    }
   }
 
   private onSubmit(event: React.MouseEvent<HTMLButtonElement>) {
