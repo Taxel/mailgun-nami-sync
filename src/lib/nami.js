@@ -77,12 +77,19 @@ export default class NamiAPI {
  * @param {*} leiter (bool) if the group leaders should be included or not. Defaults to true
  */
   listMembers(stufe, leiter = true){
-    return this.search({
+    let searchFor = {
       taetigkeitId: (leiter) ? 6 : " ",
       mglStatusId: "AKTIV",
       mglTypeId: "MITGLIED",
       untergliederungId: stufe
-    })
+    }
+    if(stufe == NamiAPI.Stufe.FREIMI){
+      searchFor = {
+        tagId: 1689
+      }
+    }
+
+    return this.search(searchFor)
 
 
   }
@@ -126,9 +133,11 @@ NamiAPI.Status = Object.freeze({
 
 //contains the untergliederungId for the search request
 NamiAPI.Stufe = Object.freeze({
+  ALLE: "",
   WOE: 1,
   JUPFI: 2,
   PFADI: 3,
   ROVER: 4,
-  STAVO: 5
+  STAVO: 5,
+  FREIMI: 6
 })
