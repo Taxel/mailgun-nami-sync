@@ -6,13 +6,13 @@
               "request": "launch",
               "name": "Electron: Main",
               "port": 5858,
-              "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-forge.cmd",
+              "runtimeExecutable": "electron-forge",
               "runtimeArgs": [
                   "start",
                   "--vscode"
               ],
               "windows": {
-                  "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron-forge.cmd"
+                  "runtimeExecutable": "electron-forge"
               }
           },
           {

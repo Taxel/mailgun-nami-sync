@@ -1,3 +1,8 @@
 node_modules
 out
 .eslintcache
+src/lib/mailgun_api.json
+PHP_Nami_API/
+src/lib/keys.json
+npm-debug.log
+package-lock.json
