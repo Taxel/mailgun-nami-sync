@@ -2,7 +2,9 @@ import request from 'request';
 
 
 
-
+/**
+ * Promise based Class for communication with DPSG Namentliche Mitgliedermeldung
+ */
 export default class NamiAPI {
   constructor(loginName, password){
     this.loginName = loginName;
@@ -25,9 +27,13 @@ export default class NamiAPI {
    */
   startSession(){
     return new Promise((resolve, reject)=>{
+      if(this.status == NamiAPI.Status.CONNECTED){
+        resolve(true);
+        return;
+      }
 
-      if(this.status == NamiAPI.Status.CONNECTED || this.status == NamiAPI.Status.AUTH){
-        console.warn("Auth Cancelled: Current Nami Status is CONNECTED or AUTH");
+      if(this.status == NamiAPI.Status.AUTH){
+        console.warn("Auth Cancelled: Current Nami Status is AUTH");
         resolve(false);
         return;
       }

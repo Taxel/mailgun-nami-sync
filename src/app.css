@@ -1,0 +1,21 @@
+.textField {
+  margin: 1em 1em;
+}
+
+.textFieldList {
+  float: left;
+}
+
+.toggleList {
+  float: left;
+}
+
+.dropDownList {
+  float:left;
+}
+
+.scrollable {
+  overflow: scroll;
+  margin: 1em 1em;
+  max-height: 80vh;
+}
