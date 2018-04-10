@@ -69,7 +69,13 @@ export default class NamiAPI {
               })
         }else{
           this.status = NamiAPI.Status.ERROR;
-          reject("AUTH Error: status code != 302. Response:\n" + JSON.stringify(response.toJSON()))
+
+          try{
+            body = JSON.parse(body);
+          }catch(err){
+            reject("AUTH Error: status code != 302. Response:\n" + JSON.stringify(response.toJSON()))
+          }
+          reject(body.statusMessage)
         }
       })
 

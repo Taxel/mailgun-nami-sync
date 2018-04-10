@@ -17,5 +17,59 @@
 .scrollable {
   overflow: scroll;
   margin: 1em 1em;
-  max-height: 80vh;
+  max-height: 70vh;
+}
+
+.infoText {
+  font-size: small;
+  margin: 3em 0;
+  display: block;
+}
+
+.errorMessage {
+  padding: 1em;
+  margin: 2em;
+  border: 1px solid black;
+  background-color: #f55246;
+  display: block;
+}
+
+.bodyContainer {
+  padding: 2em 2em;
+}
+
+.setupGrid {
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 10px [content-start] 1fr [btn-left] 120px [middle] 120px [btn-right] 1fr [content-end] 10px;
+  grid-template-rows: [header-start] 20% [header-end] 1em [content-start] auto [content-end] 1em [footer-start] 20% [footer-end];
+}
+
+.setupStepper {
+  grid-column-start: content-start;
+  grid-column-end: content-end;
+  grid-row-start: header-start;
+  grid-row-end: header-end;
+}
+
+.setupBody {
+  grid-column-start: content-start;
+  grid-column-end: content-end;
+  grid-row-start: content-start;
+  grid-row-end: content-end;
+  text-align: center;
+}
+.setupButtons-left {
+  float: left;
+}
+
+.setupButtons {
+  grid-column-start: btn-left;
+  grid-column-end: btn-right;
+  grid-row-start: footer-start;
+  grid-row-end: footer-end;
+}
+
+.setupButtons-right {
+  float:right;
 }

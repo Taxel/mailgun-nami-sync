@@ -6,6 +6,8 @@ import { enableLiveReload } from 'electron-compile';
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
+global.sharedObj = {masterPassword: null, test: "bla"};
+
 const isDevMode = process.execPath.match(/[\\/]electron/);
 
 if (isDevMode) enableLiveReload({ strategy: 'react-hmr' });

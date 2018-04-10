@@ -1,5 +1,5 @@
 import React from 'react';
-import secret_keys from '../lib/keys.json';
+import {loadEncrypted} from '../lib/keysEncryptor.js';
 import NamiAPI from '../lib/nami.js';
 
 import NamiViewer from './namiViewer.jsx';
@@ -17,21 +17,37 @@ export default class MainPage extends React.Component {
     this.state = {
       drawerOpen: false,
       currentPage: 1,
-      namiLoaded: false
+      namiLoaded: false,
+      namiError: ""
     }
-    window.nami = new NamiAPI(secret_keys.nami_user, secret_keys.nami_pw);
-    window.nami.startSession().then((success)=>this.setState({namiLoaded: true}), (error)=>console.error(error));
+
+    this.reloadKeyFile = this.reloadKeyFile.bind(this);
+
+    this.reloadKeyFile();
+    window.nami = new NamiAPI(this.secret_keys.nami_user, this.secret_keys.nami_pw);
+    window.nami.startSession().then((success)=>this.setState({namiLoaded: true}), (error)=>this.setState({namiError: error}));
 
   }
 
+  reloadKeyFile(){
+    this.secret_keys = loadEncrypted(require("electron").remote.getGlobal('sharedObj').masterPassword)
+  }
 
 
 
 
   render() {
     let body = null;
+
     if(!this.state.namiLoaded){
-      body = (<Paper><span style={{textAlign: "center"}}>Nami l&auml;dt...<CircularProgress /></span></Paper>);
+      if(this.state.namiError){
+        body= (<Paper className="body"><span className="errorMessage">Nami Fehler: <br />{this.state.namiError}</span>
+        <h3>Bitte überprüfe die Anmeldedaten zur NaMi:</h3>
+          <ConfigPage reloadKeyFile={this.reloadKeyFile}/>
+        </Paper>)
+      }else{
+      body = (<Paper className="body"><span style={{textAlign: "center"}}>Nami l&auml;dt...<CircularProgress /></span></Paper>);
+      }
     }else{
       switch(this.state.currentPage){
         case 1:
@@ -41,7 +57,7 @@ export default class MainPage extends React.Component {
           body = (<MailgunListUpdater />);
           break;
         case 3:
-          body = (<ConfigPage />);
+          body = (<ConfigPage reloadKeyFile={this.reloadKeyFile}/>);
           break;
         default:
           console.error("Invalid currentPage: " + this.state.currentPage)

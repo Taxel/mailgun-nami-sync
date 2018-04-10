@@ -1,6 +1,5 @@
 import React from 'react';
 import NamiAPI from '../lib/nami.js';
-import secret_keys from '../lib/keys.json'
 
 import {List, ListItem, DropDownMenu, MenuItem, Toggle, Paper, CircularProgress, Toolbar, ToolbarTitle, ToolbarGroup, Snackbar} from 'material-ui';
 
