@@ -6,3 +6,4 @@ PHP_Nami_API/
 src/lib/keys.json
 npm-debug.log
 package-lock.json
+src/keysEncrypted.enc

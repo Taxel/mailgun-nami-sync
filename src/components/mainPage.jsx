@@ -24,6 +24,11 @@ export default class MainPage extends React.Component {
     this.reloadKeyFile = this.reloadKeyFile.bind(this);
 
     this.reloadKeyFile();
+
+  }
+
+  componentDidMount(){
+    console.log("component did mount; loading Nami");
     window.nami = new NamiAPI(this.secret_keys.nami_user, this.secret_keys.nami_pw);
     window.nami.startSession().then((success)=>this.setState({namiLoaded: true}), (error)=>this.setState({namiError: error}));
 
@@ -78,9 +83,9 @@ export default class MainPage extends React.Component {
   />
       <Drawer open={this.state.drawerOpen} docked={true} zDepth={2}
       containerStyle={{paddingTop: "5em"}}>
-          <MenuItem onClick={()=>this.setState({currentPage: 1, drawerOpen: false})}>Nami Data</MenuItem>
-          <MenuItem onClick={()=>this.setState({currentPage: 2, drawerOpen: false})}>Mailing Lists </MenuItem>
-          <MenuItem onClick={()=>this.setState({currentPage: 3, drawerOpen: false})}>Konfiguration </MenuItem>
+          <MenuItem onClick={()=>this.setState({currentPage: 1, drawerOpen: false})}>Nami Daten Einsicht</MenuItem>
+          <MenuItem onClick={()=>this.setState({currentPage: 2, drawerOpen: false})}>Mailing Listen </MenuItem>
+          <MenuItem onClick={()=>this.setState({currentPage: 3, drawerOpen: false})}>Konfiguration API/Nami/Passwort </MenuItem>
         </Drawer>
         {body}
       </div>

@@ -27,6 +27,7 @@ export default class NamiAPI {
    */
   startSession(){
     return new Promise((resolve, reject)=>{
+      //do not start a new session if one is already in progress
       if(this.status == NamiAPI.Status.CONNECTED){
         resolve(true);
         return;

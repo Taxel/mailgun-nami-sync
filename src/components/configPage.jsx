@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, TextField, RaisedButton,  Divider } from 'material-ui';
+import { Paper, TextField, RaisedButton,  Divider, Snackbar } from 'material-ui';
 import fs from 'fs';
 import path from 'path';
 import NamiAPI from '../lib/nami.js';
@@ -12,6 +12,7 @@ export default class ConfigPage extends React.Component{
 
     this.save = this.save.bind(this);
     this.reset = this.reset.bind(this);
+    this.changeMasterPassword = this.changeMasterPassword.bind(this);
 
     this.refMailgunKey = null;
     this.refMailgunDomain = null;
@@ -22,13 +23,41 @@ export default class ConfigPage extends React.Component{
       loading: true,
       keys: null,
       keysUnlocked: false,
-      password: "test"
+      password: require("electron").remote.getGlobal("sharedObj").masterPassword,
+      passwordError: null,
+      passwordChanged: false
     }
 
   }
 
   componentDidMount(){
     this.reset();
+  }
+
+  changeMasterPassword(){
+    let oldPw = require("electron").remote.getGlobal("sharedObj").masterPassword;
+    //check if old master password was entered correctly
+    if(this.passwordOldField.input.value == oldPw){
+      //check if both new fields are matching
+      let pass = this.passwordField.input.value;
+      if(pass == this.passwordField2.input.value){
+        //decrypt with old pw
+        let keyData = loadEncrypted(oldPw);
+        //change pw
+        require("electron").remote.getGlobal("sharedObj").masterPassword = pass;
+        //encrypt with new pw
+        saveEncrypted(pass, keyData);
+        //clear inputs
+        this.passwordField.input.value = "";
+        this.passwordField2.input.value = "";
+        this.passwordOldField.input.value = "";
+        this.setState({passwordChanged: true});
+      }else{
+        this.setState({passwordError: "pws_dont_match"})
+      }
+    }else{
+      this.setState({passwordError: "old_pw_wrong"})
+    }
   }
 
   save(){
@@ -80,8 +109,11 @@ export default class ConfigPage extends React.Component{
 
     return (
       <div>
-    <Paper className="scrollable">
+    <Paper className="scrollable setupGrid">
+    <div className="contentLeft">
       <h2>API und Nami Info</h2>
+      <RaisedButton label={(keysUnlocked) ? "sperren" : "entsperren"} onClick={()=>this.setState({keysUnlocked: !keysUnlocked})}/>
+
       <TextField
       ref={element => {this.refMailgunKey = element}}
       className="textField"
@@ -113,12 +145,27 @@ disabled={!keysUnlocked}
 type={(keysUnlocked) ? "text" : "password"}
 /><br />
 
-<RaisedButton label={(keysUnlocked) ? "sperren" : "entsperren"} onClick={()=>this.setState({keysUnlocked: !keysUnlocked})}/>
 <RaisedButton label="Speichern" onClick={this.save} />
 <RaisedButton label="Zurücksetzen" onClick={this.reset} />
-    </Paper>
+</div>
     <Divider />
-
+<div className="contentRight borderleft">
+    <h2>Masterpasswort ändern:</h2>
+    <TextField type="password" hintText="Altes Masterpasswort" ref={component => {this.passwordOldField = component}} errorText={(this.state.passwordError == "old_pw_wrong") ? "Falsches Masterpasswort" : ""}/>
+    <br />
+    <TextField type="password" hintText="Masterpasswort" ref={component => {this.passwordField = component}} />
+    <br />
+    <TextField type="password" hintText="Passwort wiederholen" ref={component => {this.passwordField2 = component}} errorText={(this.state.passwordError == "pws_dont_match") ? "Die Passwörter stimmen nicht überein" : ""}/>
+   <br />
+    <RaisedButton label="Masterpasswort ändern" onClick={this.changeMasterPassword}/>
+    </div>
+    </Paper>
+    <Snackbar
+          open={this.state.passwordChanged}
+          message="Master Password Changed"
+          autoHideDuration={2500}
+          onRequestClose={()=>{this.setState({passwordChanged: false})}}
+        />
     </div>)
   }
 }

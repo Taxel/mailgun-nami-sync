@@ -16,7 +16,8 @@ const createWindow = async () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 600
+    height: 600,
+    title: "Nami Mailgun Synch"
   });
 
   mainWindow.setMenu(null)

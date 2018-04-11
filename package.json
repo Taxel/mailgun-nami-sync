@@ -24,12 +24,20 @@
           "zip"
         ],
         "linux": [
-          "deb",
-          "rpm"
+          "deb"
         ]
       },
       "electronPackagerConfig": {
-        "packageManager": "yarn"
+        "icon": "icon.ico",
+        "packageManager": "yarn",
+        "ignore": [
+          ".vscode",
+          "src/lib/keys.json",
+          "src/keysEncrypted.enc",
+          "PHP_Nami_API",
+          ".gitignore",
+          "npm-debug.log"
+        ]
       },
       "electronWinstallerConfig": {
         "name": "nami_client"

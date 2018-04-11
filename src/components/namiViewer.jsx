@@ -11,8 +11,6 @@ export default class NamiViewer extends React.Component {
     this.namiSearch = this.namiSearch.bind(this);
     this.changeStufe = this.changeStufe.bind(this);
 
-    this.nami = window.nami;
-    this.nami.startSession().then((success)=>{this.namiSearch(NamiAPI.Stufe.ALLE, true)}, (error)=>{console.error(error)});
 
     this.state = {
       stufe: NamiAPI.Stufe.ALLE,
@@ -20,6 +18,11 @@ export default class NamiViewer extends React.Component {
       namiData: null,
       namiInitialized: false
     }
+  }
+
+  componentDidMount(){
+    this.nami = window.nami;
+    this.nami.startSession().then((success)=>{this.namiSearch(NamiAPI.Stufe.ALLE, true)}, (error)=>{console.error(error)});
   }
 
   /**

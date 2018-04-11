@@ -1,6 +1,6 @@
 import React from 'react';
 import {loadEncrypted, doesEncryptedFileExist, isPasswordCorrect, deleteEncryptedFile} from '../lib/keysEncryptor.js';
-import { Paper, TextField, MuiThemeProvider, RaisedButton, Stepper, StepLabel, Dialog } from 'material-ui';
+import { Paper, TextField, MuiThemeProvider, RaisedButton, Stepper, StepLabel, Dialog, AppBar } from 'material-ui';
 import Step from 'material-ui/Stepper/Step';
 
 export default class LoginPage extends React.Component {
@@ -50,13 +50,28 @@ export default class LoginPage extends React.Component {
 
     return(
       <MuiThemeProvider>
+        <div>
+        <AppBar
+    title="Nami Mailgun Synch"
+    zDepth={3}
+    style={{zIndex:1700}}
+    showMenuIconButton={false}
+  />
     <Paper className="bodyContainer setupGrid">
 
 
     <div className="setupBody">
     Bitte gib dein Masterpasswort ein.
     <br/>
-    <TextField hintText="Masterpasswort" ref={component => {this.passwordField = component}} errorText={(passwordWrong) ? "Das eingegebene Passwort is falsch" : ""}/>
+    <TextField type="password" hintText="Masterpasswort" onKeyPress={(ev) => {
+      //catch enter being pressed
+    if (ev.key === 'Enter') {
+      // Do code here
+      ev.preventDefault();
+      this.validatePassword();
+
+    }
+  }} ref={component => {this.passwordField = component}} errorText={(passwordWrong) ? "Das eingegebene Passwort is falsch" : ""}/>
     <br />
     <RaisedButton label="OK" primary={true} onClick={this.validatePassword}/> <RaisedButton label="Passwort vergessen" secondary={true} onClick={()=>this.setState({showConfirmPasswordDelete: true})}/>
     <br/>
@@ -74,6 +89,7 @@ export default class LoginPage extends React.Component {
   </div>
 
     </Paper>
+    </div>
     </MuiThemeProvider>
     )
   }

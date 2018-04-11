@@ -14,10 +14,15 @@
   float:left;
 }
 
+h2 {
+  margin-left: 1em;
+}
+
 .scrollable {
-  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
   margin: 1em 1em;
-  max-height: 70vh;
+  max-height: 85vh;
 }
 
 .infoText {
@@ -43,6 +48,39 @@
   height: 100vh;
   grid-template-columns: 10px [content-start] 1fr [btn-left] 120px [middle] 120px [btn-right] 1fr [content-end] 10px;
   grid-template-rows: [header-start] 20% [header-end] 1em [content-start] auto [content-end] 1em [footer-start] 20% [footer-end];
+}
+
+.contentWithFooter {
+  grid-column-start: content-start;
+  grid-column-end: content-end;
+  grid-row-start: header-start;
+  grid-row-end: content-end;
+}
+
+.footer {
+  grid-column-start: content-start;
+  grid-column-end: content-end;
+  grid-row-start: footer-start;
+  grid-row-end: footer-end;
+}
+
+
+.contentLeft {
+  grid-column-start: content-start;
+  grid-column-end: middle;
+  grid-row-start: header-start;
+  grid-row-end: footer-end;
+}
+.contentRight {
+  grid-column-start: middle;
+  grid-column-end: content-end;
+  grid-row-start: header-start;
+  grid-row-end: footer-end;
+}
+
+.borderleft {
+  border-left: 2px #e2e2e2 ridge;
+  padding-left: 1em;
 }
 
 .setupStepper {
