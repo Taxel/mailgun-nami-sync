@@ -1,6 +1,6 @@
 import React from 'react';
 import NamiAPI from '../lib/nami.js';
-import {FlatButton, Dialog, Snackbar, RaisedButton, Toggle, MenuItem, DropDownMenu, Table, TableRow, TableRowColumn, Paper, TextField, Divider} from 'material-ui';
+import {FlatButton, Dialog, Snackbar, RaisedButton, Toggle, MenuItem, DropDownMenu, Table, TableRow, TableRowColumn, Paper, TextField} from 'material-ui';
 import {loadEncrypted} from '../lib/keysEncryptor.js';
 
 import fs from 'fs';
@@ -28,7 +28,7 @@ export default class MailgunListUpdater extends React.Component {
 
     this.secret_keys = loadEncrypted(require('electron').remote.getGlobal("sharedObj").masterPassword);
 
-    this.mailgun = require('mailgun-js')({apiKey: this.secret_keys.key, domain: this.secret_keys.domain})
+    this.mailgun = require('mailgun-js')({apiKey: this.secret_keys.key, domain: this.secret_keys.domain});
 
     this.textFieldRefs = {};
 
@@ -73,8 +73,7 @@ export default class MailgunListUpdater extends React.Component {
    * @param {*} leiter
    */
   editNewMailingList(name, stufe, leiter) {
-    let newState = this.state.newList;
-    newState = {name: name, stufe: stufe, leiter: leiter};
+    const newState = {name: name, stufe: stufe, leiter: leiter};
     this.setState({newList: newState});
   }
 
@@ -99,10 +98,10 @@ export default class MailgunListUpdater extends React.Component {
     //check if this.state.mailingLists === readListsSync()
     let currentFormData = this.getFormData();
     let oldData = this.readListsSync();
-    let hasDataChanged = oldData.length != currentFormData.length;
+    let hasDataChanged = oldData.length !== currentFormData.length;
     for(let i = 0; i < currentFormData.length; i++){
       let l1 = currentFormData[i], l2 = oldData[i];
-      hasDataChanged |= l1.name != l2.name || l1.stufe != l2.stufe || l1.leiter != l2.leiter;
+      hasDataChanged |= l1.name !== l2.name || l1.stufe !== l2.stufe || l1.leiter !== l2.leiter;
     }
     if(hasDataChanged){
       this.setState({dialogOpen: true});
@@ -217,7 +216,7 @@ export default class MailgunListUpdater extends React.Component {
    * @param {*} leiter
    */
   getNamiMailingList(stufe, leiter){
-    console.log("getting Mailing List for Stufe " + stufe)
+    console.log("getting Mailing List for Stufe " + stufe);
     return new Promise((resolve, reject)=>{
       this.nami.listMembers(stufe, leiter).then((data)=>{
         let mails = [];
@@ -251,7 +250,7 @@ export default class MailgunListUpdater extends React.Component {
     }
 
     let stufen = [];
-    for(let stufe in NamiAPI.Stufe){
+    for(const stufe in NamiAPI.Stufe){
       stufen.push((<MenuItem primaryText={stufe} value={NamiAPI.Stufe[stufe]} key={NamiAPI.Stufe[stufe]}/>))
     }
     this.textFieldRefs = {};
@@ -269,7 +268,7 @@ export default class MailgunListUpdater extends React.Component {
         this.setState({mailingLists: newMailingLists});
       }}/></TableRowColumn></TableRow>
     )
-    })
+    });
 
     return (
       <div className="setupGrid">
