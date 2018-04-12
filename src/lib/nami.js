@@ -1,7 +1,6 @@
 import request from 'request';
 
 
-
 /**
  * Promise based Class for communication with DPSG Namentliche Mitgliedermeldung
  */
@@ -28,12 +27,12 @@ export default class NamiAPI {
   startSession(){
     return new Promise((resolve, reject)=>{
       //do not start a new session if one is already in progress
-      if(this.status == NamiAPI.Status.CONNECTED){
+      if(this.status === NamiAPI.Status.CONNECTED){
         resolve(true);
         return;
       }
 
-      if(this.status == NamiAPI.Status.AUTH){
+      if(this.status === NamiAPI.Status.AUTH){
         console.warn("Auth Cancelled: Current Nami Status is AUTH");
         resolve(false);
         return;
@@ -45,20 +44,20 @@ export default class NamiAPI {
         },  (error, response, body) => {
         if(error){
           this.status = NamiAPI.Status.ERROR;
-          reject(error)
+          reject(error);
           return;
         }
-        if (response.statusCode == 302) {
+        if (response.statusCode === 302) {
             request.get({url: response.headers.location,
               jar: this.cookieJar}, (error2, response2, body2) =>{
                 if(error2){
                   this.status = NamiAPI.Status.ERROR;
-                  reject(error)
+                  reject(error);
                   return;
                 }
-                if(response2.statusCode != 200){
+                if(response2.statusCode !== 200){
                   this.status = NamiAPI.Status.ERROR;
-                  reject("AUTH Error: status code != 200 (in second response). Response:\n" + JSON.stringify(response2.toJSON()))
+                  reject("AUTH Error: status code != 200 (in second response). Response:\n" + JSON.stringify(response2.toJSON()));
                   return;
                 }
                 console.log("Successfully connected to Nami");
@@ -85,18 +84,19 @@ export default class NamiAPI {
   }
 /**
  * Returns a promise to an array of members.
- * @param {integer} stufe  which group we should search for.
+ * @param {Number} stufe  which group we should search for.
  * Use NamiAPI.Stufe for this
  * @param {*} leiter (bool) if the group leaders should be included or not. Defaults to true
  */
   listMembers(stufe, leiter = true){
     let searchFor = {
-      taetigkeitId: (leiter) ? 6 : " ",
       mglStatusId: "AKTIV",
       mglTypeId: "MITGLIED",
       untergliederungId: stufe
-    }
-    if(stufe == NamiAPI.Stufe.FREIMI){
+    };
+    if (leiter !== null)
+      searchFor['taetigkeitId'] = (leiter) ? 6 : " ";
+    if(stufe === NamiAPI.Stufe.FREIMI){
       searchFor = {
         tagId: 1689
       }
@@ -112,7 +112,7 @@ export default class NamiAPI {
    */
   search(searchedValues){
     return new Promise((resolve, reject)=>{
-      if(this.status != NamiAPI.Status.CONNECTED){
+      if(this.status !== NamiAPI.Status.CONNECTED){
         reject("Authenticate before trying to search")
       }
       let params = {
@@ -120,8 +120,7 @@ export default class NamiAPI {
         page: 1,
         start: 0,
         limit: 999999
-      }
-
+      };
 
       request.get({url: this.getSearchURL(), qs: params, useQueryString: true, jar: this.cookieJar}, (error, response, body)=>{
         resolve(JSON.parse(body).data)
@@ -142,7 +141,7 @@ NamiAPI.Status = Object.freeze({
   CONNECTED: 3,
   // an error occurred
   ERROR: 99
-})
+});
 
 //contains the untergliederungId for the search request
 NamiAPI.Stufe = Object.freeze({
@@ -153,4 +152,4 @@ NamiAPI.Stufe = Object.freeze({
   ROVER: 4,
   STAVO: 5,
   FREIMI: 6
-})
+});

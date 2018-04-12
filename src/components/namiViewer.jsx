@@ -1,7 +1,7 @@
 import React from 'react';
 import NamiAPI from '../lib/nami.js';
 
-import {List, ListItem, DropDownMenu, MenuItem, Toggle, Paper, CircularProgress, Toolbar, ToolbarTitle, ToolbarGroup, Snackbar} from 'material-ui';
+import {List, ListItem, DropDownMenu, MenuItem, Toggle, Paper, Toolbar, ToolbarTitle, ToolbarGroup} from 'material-ui';
 
 
 export default class NamiViewer extends React.Component {
@@ -22,13 +22,13 @@ export default class NamiViewer extends React.Component {
 
   componentDidMount(){
     this.nami = window.nami;
-    this.nami.startSession().then((success)=>{this.namiSearch(NamiAPI.Stufe.ALLE, true)}, (error)=>{console.error(error)});
+    this.nami.startSession().then(()=>{this.namiSearch(NamiAPI.Stufe.ALLE, true)}, (error)=>{console.error(error)});
   }
 
   /**
    * Searches nami and displays results.
    * Sets state!
-   * @param { } stufe
+   * @param {NamiAPI.Stufe} stufe
    * @param {*} leiter
    */
   namiSearch(stufe, leiter){
@@ -37,7 +37,7 @@ export default class NamiViewer extends React.Component {
       this.setState({namiData: data.map((elem)=>{
         let email = elem.entries_email || "";
         if(elem.entries_emailVertretungsberechtigter){
-          if(email != ""){
+          if(email !== ""){
             email += ", ";
           }
           email += elem.entries_emailVertretungsberechtigter;
@@ -59,7 +59,7 @@ namiInitialized: true})
     if(this.state.namiData){
       let formatDate = (dateString)=>{
         return new Date(Date.parse(dateString)).toLocaleDateString('de-DE');
-      }
+      };
       namiData = this.state.namiData.map((elem, i)=>(
       <ListItem key={i} nestedItems={[
         <ListItem key={1} primaryText={"Nami NR: " + elem.full.entries_mitgliedsNummer}/>,
@@ -70,7 +70,7 @@ namiInitialized: true})
       return null
     }
     let stufen = [];
-    for(let stufe in NamiAPI.Stufe){
+    for(const stufe in NamiAPI.Stufe){
       stufen.push((<MenuItem primaryText={stufe} value={NamiAPI.Stufe[stufe]} key={NamiAPI.Stufe[stufe]}/>))
     }
     return (

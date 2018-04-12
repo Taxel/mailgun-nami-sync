@@ -13,7 +13,7 @@ export default class App extends React.Component {
     this.state = {
       loggedIn: masterPassword != null,
       showSetup: !doesEncryptedFileExist()
-    }
+    };
 
     this.onLoginComplete = this.onLoginComplete.bind(this);
   }
