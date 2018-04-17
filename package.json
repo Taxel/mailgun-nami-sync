@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": "src/index.js",
+  "repository": "https://github.com/Taxel/mailgun-nami-sync",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -55,8 +56,9 @@
     }
   },
   "dependencies": {
+    "@material-ui/icons": "^1.0.0-beta.42",
     "bluebird": "^3.5.1",
-    "bootstrap": "4.1.0",
+    "bootstrap": "^4.1.0",
     "chart.js": "^2.7.2",
     "colors": "^1.2.1",
     "electron-compile": "^6.4.2",

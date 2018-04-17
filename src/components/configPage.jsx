@@ -113,7 +113,7 @@ export default class ConfigPage extends React.Component{
     <div className="contentLeft">
       <h2>API und Nami Info</h2>
       <RaisedButton label={(keysUnlocked) ? "sperren" : "entsperren"} onClick={()=>this.setState({keysUnlocked: !keysUnlocked})}/>
-
+  <br />
       <TextField
       ref={element => {this.refMailgunKey = element}}
       className="textField"

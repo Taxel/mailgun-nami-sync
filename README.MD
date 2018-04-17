@@ -13,6 +13,18 @@ Um die Applikation nutzen zu können, werden die folgenden Dinge benötigt:
 * Die zugehörige Domain welche bei Mailgun registriert ist. z.B. `mg.dpsg-woauchimmer.de`
 * Ein NaMi Account mit mindestens Leserechten. Benötigt werden die Mitgliedsnummer und das Passwort. Getestet wurden bisher nur Schreib- und Leserechte auf Stammesebene. Die Applikation liest aber nur, also sollte nichts passieren können.
 
+### Freie Mitarbeiter/Freimis
+
+*Mailgun Nami Sync* hat standardmäßig auch eine Mailingliste für FreiMis (freie Mitarbeiter). Da diese so über die Nami nicht direkt zuzuweisen sind (wenn manche davon noch auf anderer Ebene aktiv sind zum Beispiel), werden sie am Tag `Freimi` erkannt.
+Dieser lässt sich folgendermaßen setzen:
+
+* zuerst muss der Tag erstellt werden. Dies geschieht im *Tag Manager* Menü.
+![Tag erstellen](screenshots/nami_tags_freimi.png?raw=true "Tag erstellen")
+
+* anschließend muss der Tag den entsprechenden Benutzern zugewiesen werden. Dies kann man zum Beispiel über die Suche machen
+![Benutzer auswählen](screenshots/nami_tags_mitglieder_taggen.png?raw=true "Benutzer auswählen")
+![Tag zuweisen](screenshots/nami_tags_auswahl.png?raw=true "Tag zuweisen")
+
 ## Installation
 Die folgenden Instruktionen sind für Programmierer gedacht, die am Projekt mit-/ das Projekt weiterentwickeln möchten. Es wird davon ausgegangen, dass `node` sowie `npm` installiert sind.
 
